@@ -1,5 +1,8 @@
 package br.com.lettersonEnterprise.servicos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.lettersonEnterprise.enumeradores.Posicao;
 import br.com.lettersonEnterprise.modelos.ArvoreDeDependencias;
 import br.com.lettersonEnterprise.modelos.TarefaNo;
@@ -81,5 +84,28 @@ public class ArvoreDeDependenciaServico {
 
 		this.arvoreDeDependencias = new ArvoreDeDependencias(raiz);
 		return true;
+	}
+	
+	
+	public List<TarefaNo> obterOrdemExecucao() {
+	    List<TarefaNo> ordem = new ArrayList<>();
+	    if (this.arvoreDeDependencias != null && this.arvoreDeDependencias.getRaiz() != null) {
+	        percursoPosOrdem(this.arvoreDeDependencias.getRaiz(), ordem);
+	    }
+	    return ordem;
+	}
+
+	private void percursoPosOrdem(TarefaNo noAtual, List<TarefaNo> listaOrdem) {
+	    if (noAtual == null) {
+	        return;
+	    }
+	    // 1. Visita a subárvore da esquerda (dependência 1)
+	    percursoPosOrdem(noAtual.getNoTarefaEsqueda(), listaOrdem);
+	    
+	    // 2. Visita a subárvore da direita (dependência 2)
+	    percursoPosOrdem(noAtual.getNoTarefaDireita(), listaOrdem);
+	    
+	    // 3. Visita a si mesmo (só executa a tarefa após os filhos estarem prontos)
+	    listaOrdem.add(noAtual);
 	}
 }
